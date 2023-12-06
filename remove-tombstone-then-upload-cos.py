@@ -25,7 +25,7 @@ def filter_deleted(json_data):
 
 def filter_date_save(json_data, comparison_date):
     comparison_datetime = datetime.strptime(comparison_date, '%Y-%m-%d')
-    return [block for block in json_data if ("docUpdatedAt" in block and datetime.strptime(block["docUpdatedAt"], '%Y-%m-%d') > comparison_datetime)]
+    return [block for block in json_data if ("docUpdatedAt" in block and datetime.strptime(block["docUpdatedAt"], '%Y-%m-%dT%H:%M:%S.%fZ') > comparison_datetime)]
 
 
 def filter_operation(input_file, output_file, comparison_date):
@@ -35,7 +35,6 @@ def filter_operation(input_file, output_file, comparison_date):
                 input_lines = ifile.readlines()
                 for input_line in input_lines:
                     if len(comparison_date) != 0:
-                        print("Comparison Date:", comparison_date)
                         output_line = filter_date_save(json.loads(input_line), comparison_date)
                     else:
                         output_line = filter_deleted(json.loads(input_line))
@@ -125,6 +124,7 @@ def main(input_file, output_file, comparison_date):
 
     filtered_by_date_file_path = f'{file_name}_filtered_by_date.txt'
     # now use tombstone free file to filter the documents by date
+    print("Comparison Date:", comparison_date)
     filter_operation(output_file, filtered_by_date_file_path, comparison_date)
 
     # bucket name, item name, file path
